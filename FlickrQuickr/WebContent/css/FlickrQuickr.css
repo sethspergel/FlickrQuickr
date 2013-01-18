@@ -1,0 +1,33 @@
+@CHARSET "UTF-8";
+body {
+    font-family: arial;
+    }
+h1 {    
+
+    border: 1px solid;
+    color:#39F;
+    text-align: center;
+    }
+    
+ tr:nth-child(odd) {
+    background-color: #FFFFFF;
+}   
+ tr:nth-child(even) {
+    background-color: #FFFFFF;
+}
+td {
+    border: 0px;
+    text-align: center;
+    }
+a:link {text-decoration:none;
+		color:#707070;
+		}
+a:visited {text-decoration:none;
+		color:#0099CC;
+		}
+a:hover {text-decoration:none;
+		font-weight: bold;
+		}
+a:active {text-decoration:none;
+		font-weight:bold;
+		}
