@@ -22,8 +22,9 @@ public class PhotoList {
 
 	private static String flickrFeedURL = "http://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
 
+	
 	// how long to wait between refreshes of the feed
-	// by default, refresh every 10 seconds
+	// by default, we will cache for 10 seconds
 	private static long REFRESH_INTERVAL = 10000;
 
 	private static PhotoList photoList = null;
