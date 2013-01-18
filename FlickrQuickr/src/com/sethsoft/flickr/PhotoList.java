@@ -18,14 +18,21 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+/** 
+* PhotoList represents the objects returned from a Flickr JSON feed.
+* Within it, the individual Flickr photos are represented with the Photo object
+* 
+* In order to provide for caching, PhotoList uses a singleton (via the getPhotoList static method)
+* to generate an object and refresh it when necessary.  
+*
+*/
 public class PhotoList {
 
 	private static String flickrFeedURL = "http://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
 
-	
 	// how long to wait between refreshes of the feed
-	// by default, we will cache for 10 seconds
-	private static long REFRESH_INTERVAL = 10000;
+	// by default, we will cache for 5 seconds
+	private static long REFRESH_INTERVAL = 5000;
 
 	private static PhotoList photoList = null;
 	private static long lastUpdated = 0;
@@ -85,6 +92,11 @@ public class PhotoList {
 		this._items = _items;
 	}
 
+	/**
+	 * Returns a single instance of the PhotoList object to be shared by all callers
+	 * However, if the object has not been requested in over REFRESH_INTERVAL milliseconds
+	 * a new Flickr feed is requested and the object is updated
+	 */
 	public static PhotoList getPhotoList() throws IOException,
 			JsonParseException, JsonMappingException {
 
@@ -99,8 +111,7 @@ public class PhotoList {
 			lastUpdated = new Date().getTime();
 
 		} else // check if caching time elapsed
-			if ((lastUpdated - currentTime) > REFRESH_INTERVAL) 
-		{
+		if ((currentTime - lastUpdated) > REFRESH_INTERVAL) {
 			// if cache time has been exceeded, repopulate the list from Flickr
 			PhotoList.populateList();
 			lastUpdated = new Date().getTime();
@@ -110,38 +121,42 @@ public class PhotoList {
 		// if we got here without an exception, either we already had a
 		// photoList
 		// or a new one has just been created and populated.
-		
+
 		return photoList;
 	}
 
+	/**
+	 * Calls the Flickr feed and repopulates our object with the returned data
+	 */
 	private static void populateList() throws IOException, JsonParseException,
 			JsonMappingException {
 
 		ClientConfig clientConfig = new DefaultClientConfig();
+		
+		// Jackson makes object mapping pretty easy. We'll tell it to use POJO mappings
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
 				Boolean.TRUE);
 
 		Client client = Client.create(clientConfig);
 
 		WebResource webResource = client.resource(flickrFeedURL);
-		String response = webResource.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+		String response = webResource.accept(MediaType.APPLICATION_JSON_TYPE)
+				.get(String.class);
 
+		// Object mapper does all the hard work for us of mapping the JSON to our Java object
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		// just in case they send us anything we're not expecting
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 				false);
-		
+
 		// it appears Flickr doesn't always send "proper" JSON
 		mapper.configure(
 				JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 
-
 		PhotoList newPhotoList = mapper.readValue(response, PhotoList.class);
-		
 
 		photoList = newPhotoList;
-		
 
 	}
 

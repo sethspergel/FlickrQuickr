@@ -12,17 +12,20 @@
 xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <head>
+<link rel="stylesheet" href="css/FlickrQuickr.css" type="text/css" />
 <title>FlickrQuickr</title>
 </head>
 <body>
-<h1>FlickrQuickr</h1>
+<h1>FlickrQuickr: ${photoList.title}</h1>
+
+(For the record, I tried to get fancy and use a lightbox-like effect for the linked page (using PrettyPhoto).  Apparently Flickr does not allow iFrames, something I should have checked on before spending the time to get the code working. ;) )
+
 <br/>
 <br/>
-<h3>Title: ${photoList.title}</h3>
 <table>
 <tr><td>Title</td><td>Image Link</td></tr>
 <c:forEach var="photo" items="${photoList.items}">
-<tr><td>${photo.title}</td><td><a href='${photo.link}'><img src='${photo.media["m"] }'/></a></td></tr>
+<tr><td><a href='${photo.link}'>${photo.title}</a></td><td><a href='${photo.link}'><img src='${photo.media["m"] }'/></a></td></tr>
 
 </c:forEach>
 </table>

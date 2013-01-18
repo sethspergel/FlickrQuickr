@@ -2,6 +2,11 @@ package com.sethsoft.flickr;
 
 import java.util.Map;
 
+
+/** 
+* Photo represents the individual photo object returned by Flickr
+*
+*/
 public class Photo {
 
 	private String _link;
